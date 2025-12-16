@@ -42,6 +42,7 @@ import {
   applyPochiLayout,
   getSortedCurrentTabGroups,
   getViewColumnForTerminal,
+  isCurrentLayoutDerivedFromPochiLayout,
   isPochiTaskTab,
 } from "./layout";
 import { PochiTaskEditorProvider } from "./webview/webview-panel";
@@ -595,6 +596,19 @@ export class CommandManager implements vscode.Disposable {
             }
           }
           await applyPochiLayout({ cwd });
+        },
+      ),
+
+      vscode.commands.registerCommand(
+        "pochi.openPochiLayoutOrTerminal",
+        async (...args) => {
+          logger.debug("openPochiLayoutOrTerminal", { args });
+          // Check if Pochi layout is already applied
+          if (isCurrentLayoutDerivedFromPochiLayout()) {
+            vscode.commands.executeCommand("pochi.openTerminal", ...args);
+          } else {
+            vscode.commands.executeCommand("pochi.applyPochiLayout", ...args);
+          }
         },
       ),
     );
